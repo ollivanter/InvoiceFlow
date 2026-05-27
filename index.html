@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>InvoiceFlow</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Mono:wght@400;500&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<!-- AUTH -->
+<div class="auth-screen visible" id="auth-screen">
+  <div class="auth-card">
+    <div class="ob-logo">InvoiceFlow</div>
+    <div class="ob-headline">Sign in to sync your invoices.</div>
+    <div class="ob-sub">Your account keeps invoices, profile details, and backups available across devices.</div>
+    <div class="auth-tabs">
+      <button class="auth-tab active" id="login-tab" onclick="showAuthMode('login')">Login</button>
+      <button class="auth-tab" id="register-tab" onclick="showAuthMode('register')">Create account</button>
+    </div>
+    <div class="field auth-name-field is-hidden" id="auth-name-field">
+      <label>Name or business name</label>
+      <input id="auth-name" placeholder="Riya Sharma Design Studio">
+    </div>
+    <div class="field">
+      <label>Email address</label>
+      <input id="auth-email" type="email" placeholder="you@example.com">
+    </div>
+    <div class="field">
+      <label>Password</label>
+      <input id="auth-password" type="password" placeholder="Minimum 8 characters">
+    </div>
+    <button class="btn btn-primary btn-full" id="auth-submit" onclick="submitAuth()">Login</button>
+    <div class="auth-error" id="auth-error"></div>
+  </div>
+</div>
+
+<!-- ONBOARDING -->
+<div class="onboarding" id="onboarding">
+  <div class="ob-card">
+    <div class="ob-header">
+      <div class="ob-logo">InvoiceFlow</div>
+      <div class="ob-headline">Welcome! Let's set up your profile.</div>
+      <div class="ob-sub">This takes 60 seconds. Your details appear on every invoice you create — saved privately on your device.</div>
+      <div class="ob-steps">
+        <div class="ob-step done" id="step-dot-1"></div>
+        <div class="ob-step" id="step-dot-2"></div>
+        <div class="ob-step" id="step-dot-3"></div>
+      </div>
+    </div>
+    <div class="ob-body">
+
+      <!-- STEP 1 -->
+      <div class="ob-page active" id="ob-page-1">
+        <div class="ob-step-label">Step 1 of 3 — About you</div>
+        <div class="ob-form-row single">
+          <div class="field">
+            <label>Your name or business name <span class="req">*</span></label>
+            <input id="ob-name" placeholder="e.g. Riya Sharma Design Studio" oninput="clearErr(this)">
+            <span class="err-msg">Please enter your name.</span>
+          </div>
+        </div>
+        <div class="ob-form-row">
+          <div class="field">
+            <label>Email address <span class="req">*</span></label>
+            <input id="ob-email" type="email" placeholder="you@example.com" oninput="clearErr(this)">
+            <span class="err-msg">Enter a valid email.</span>
+          </div>
+          <div class="field">
+            <label>Phone number</label>
+            <input id="ob-phone" placeholder="+91 98765 43210">
+          </div>
+        </div>
+        <div class="ob-form-row single">
+          <div class="field">
+            <label>Business address</label>
+            <textarea id="ob-address" placeholder="Street, City, State, PIN"></textarea>
+          </div>
+        </div>
+      </div>
+
+      <!-- STEP 2 -->
+      <div class="ob-page" id="ob-page-2">
+        <div class="ob-step-label">Step 2 of 3 — Tax & billing</div>
+        <div class="ob-form-row">
+          <div class="field">
+            <label>GST / Tax number <span class="req">*</span></label>
+            <input id="ob-tax" placeholder="22AAAAA0000A1Z5" oninput="clearErr(this)">
+            <span class="err-msg">Please enter your GST / Tax number.</span>
+          </div>
+          <div class="field">
+            <label>Default currency <span class="req">*</span></label>
+            <select id="ob-currency" onchange="clearErr(this)">
+              <option value="₹">₹ INR</option>
+              <option value="$">$ USD</option>
+              <option value="€">€ EUR</option>
+              <option value="£">£ GBP</option>
+              <option value="¥">¥ JPY</option>
+            </select>
+            <span class="err-msg">Please choose a default currency.</span>
+          </div>
+        </div>
+        <div class="ob-form-row">
+          <div class="field">
+            <label>Default tax rate (%)</label>
+            <input id="ob-taxrate" type="number" value="18" min="0" max="100" placeholder="18">
+          </div>
+          <div class="field">
+            <label>Default tax label</label>
+            <input id="ob-taxlabel" value="GST" placeholder="GST / VAT / Sales Tax">
+          </div>
+        </div>
+        <div class="ob-form-row single">
+          <div class="field">
+            <label>Default payment terms / notes</label>
+            <textarea id="ob-terms" placeholder="e.g. Payment due within 15 days. Bank transfer preferred."></textarea>
+          </div>
+        </div>
+      </div>
+
+      <!-- STEP 3 -->
+      <div class="ob-page" id="ob-page-3">
+        <div class="ob-step-label">Step 3 of 3 — Almost done</div>
+        <div class="summary-card">
+          <div class="summary-title">Your profile summary</div>
+          <div id="ob-summary" class="summary-list"></div>
+        </div>
+        <div class="ob-form-row single">
+          <div class="field">
+            <label>Website (optional)</label>
+            <input id="ob-web" placeholder="www.yourwebsite.com">
+          </div>
+        </div>
+        <div class="privacy-note">
+          Your invoices sync to your account and server-side backups are created automatically after changes.
+        </div>
+      </div>
+    </div>
+
+    <div class="ob-footer">
+      <span class="ob-progress" id="ob-progress-text">Step 1 of 3</span>
+      <div class="ob-nav">
+        <button class="btn btn-ghost is-hidden" id="ob-back-btn" onclick="obBack()">Back</button>
+        <button class="btn btn-primary" id="ob-next-btn" onclick="obNext()">Continue →</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- MAIN APP -->
+<div class="main-app" id="main-app">
+  <nav class="nav">
+    <div class="nav-logo" onclick="showTab('dashboard')">InvoiceFlow <span id="nav-business-name"></span></div>
+    <div class="nav-tabs">
+      <button class="nav-tab active" onclick="showTab('dashboard')">Dashboard</button>
+      <button class="nav-tab" onclick="showTab('builder');resetBuilder()">New Invoice</button>
+      <button class="nav-tab" onclick="showTab('profile')">Profile</button>
+    </div>
+    <div class="nav-right">
+      <span class="sync-status" id="sync-status">Synced</span>
+      <button class="btn btn-ghost btn-sm" onclick="logout()">Logout</button>
+      <div class="nav-avatar" id="nav-avatar" onclick="showTab('profile')" title="Edit profile"></div>
+    </div>
+  </nav>
+
+  <!-- DASHBOARD -->
+  <div class="app visible" id="tab-dashboard">
+    <div class="stats-row">
+      <div class="stat-card"><div class="stat-label">Total Invoiced</div><div class="stat-val green" id="stat-total">₹0</div></div>
+      <div class="stat-card"><div class="stat-label">Outstanding</div><div class="stat-val orange" id="stat-outstanding">₹0</div></div>
+      <div class="stat-card"><div class="stat-label">Overdue</div><div class="stat-val red" id="stat-overdue">₹0</div></div>
+      <div class="stat-card"><div class="stat-label">Invoices</div><div class="stat-val" id="stat-count">0</div></div>
+    </div>
+    <div class="section-header">
+      <div class="section-title">All Invoices</div>
+      <button class="btn btn-primary btn-sm" onclick="showTab('builder');resetBuilder()">+ New Invoice</button>
+    </div>
+    <div id="dashboard-content"></div>
+  </div>
+
+  <!-- BUILDER -->
+  <div class="app" id="tab-builder">
+    <div class="builder">
+      <div>
+        <div class="form-panel">
+          <div class="form-section">
+            <div class="form-section-title">Invoice Info</div>
+            <div class="form-row">
+              <div class="field"><label>Invoice #</label><input id="inv-number" value="INV-001" oninput="renderPreview()"></div>
+              <div class="field"><label>Currency</label>
+                <select id="inv-currency" onchange="renderItemsTable()">
+                  <option value="₹">₹ INR</option><option value="$">$ USD</option>
+                  <option value="€">€ EUR</option><option value="£">£ GBP</option><option value="¥">¥ JPY</option>
+                </select>
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="field"><label>Issue Date</label><input id="inv-date" type="date" oninput="renderPreview()"></div>
+              <div class="field"><label>Due Date</label><input id="inv-due" type="date" oninput="renderPreview()"></div>
+            </div>
+          </div>
+          <div class="form-section">
+            <div class="form-section-title">Bill To</div>
+            <div class="form-row single"><div class="field"><label>Client Name <span class="req">*</span></label><input id="client-name" placeholder="Acme Corp" oninput="clearErr(this);renderPreview()"><span class="err-msg">Please enter the client name.</span></div></div>
+            <div class="form-row single"><div class="field"><label>Client Email <span class="req">*</span></label><input id="client-email" type="email" placeholder="client@example.com" oninput="clearErr(this);renderPreview()"><span class="err-msg">Enter a valid client email.</span></div></div>
+            <div class="form-row single"><div class="field"><label>Client Address</label><textarea id="client-address" placeholder="123 Street, City, Country" oninput="renderPreview()"></textarea></div></div>
+          </div>
+          <div class="form-section">
+            <div class="form-section-title">Line Items</div>
+            <table class="items-table">
+              <thead><tr>
+                <th class="col-desc">Description</th><th class="col-qty">Qty</th>
+                <th class="col-rate">Rate</th><th class="col-amt">Amount</th><th class="col-del"></th>
+              </tr></thead>
+              <tbody id="items-body"></tbody>
+            </table>
+            <button class="btn btn-ghost btn-sm btn-full" onclick="addItem()">+ Add Line Item</button>
+          </div>
+          <div class="form-section">
+            <div class="form-section-title">Totals</div>
+            <div class="form-row thirds">
+              <div class="field"><label>Tax Label <span class="req">*</span></label><input id="tax-label" value="GST" oninput="clearErr(this);renderPreview()"><span class="err-msg">Please enter a tax label.</span></div>
+              <div class="field"><label>Tax %</label><input id="tax-rate" type="number" value="18" min="0" max="100" oninput="renderPreview()"></div>
+              <div class="field"><label>Discount %</label><input id="discount" type="number" value="0" min="0" max="100" oninput="renderPreview()"></div>
+            </div>
+            <div class="totals-box" id="totals-box"></div>
+          </div>
+          <div class="form-section">
+            <div class="form-section-title">Notes</div>
+            <div class="form-row single"><div class="field"><textarea id="inv-notes" class="notes-input" placeholder="Payment terms, bank details..." oninput="renderPreview()"></textarea></div></div>
+          </div>
+          <div class="form-actions">
+            <button class="btn btn-ghost" onclick="saveInvoice('Draft')">Save Draft</button>
+            <button class="btn btn-ghost" onclick="saveInvoice('Sent')">Mark as Sent</button>
+            <button class="btn btn-primary" onclick="printInvoice()">⬇ Export PDF</button>
+          </div>
+        </div>
+      </div>
+      <div class="preview-panel">
+        <div class="preview-wrap">
+          <div class="preview-toolbar">
+            <span class="preview-label">Live Preview</span>
+            <button class="btn btn-ghost btn-sm" onclick="printInvoice()">Print / PDF</button>
+          </div>
+          <div id="invoice-preview-area"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PROFILE -->
+  <div class="app" id="tab-profile">
+    <div class="profile-wrap">
+      <div class="form-panel">
+        <div class="form-section">
+          <div class="form-section-title">Your Business Details</div>
+          <div class="form-row single"><div class="field"><label>Business / Your Name</label><input id="p-name" placeholder="Your Name or Business Name"></div></div>
+          <div class="form-row">
+            <div class="field"><label>Email</label><input id="p-email" type="email" placeholder="you@example.com"></div>
+            <div class="field"><label>Phone</label>
+              <div class="phone-row">
+                <input id="p-phone-code" list="country-codes" placeholder="+91">
+                <input id="p-phone" placeholder="98765 43210">
+              </div>
+            </div>
+          </div>
+          <datalist id="country-codes">
+            <option value="+91" label="India"></option><option value="+1" label="United States"></option>
+            <option value="+1" label="Canada"></option><option value="+44" label="United Kingdom"></option>
+            <option value="+61" label="Australia"></option><option value="+64" label="New Zealand"></option>
+            <option value="+971" label="United Arab Emirates"></option><option value="+966" label="Saudi Arabia"></option>
+            <option value="+65" label="Singapore"></option><option value="+60" label="Malaysia"></option>
+            <option value="+81" label="Japan"></option><option value="+82" label="South Korea"></option>
+            <option value="+86" label="China"></option><option value="+49" label="Germany"></option>
+            <option value="+33" label="France"></option><option value="+39" label="Italy"></option>
+            <option value="+34" label="Spain"></option><option value="+31" label="Netherlands"></option>
+            <option value="+41" label="Switzerland"></option><option value="+46" label="Sweden"></option>
+            <option value="+55" label="Brazil"></option><option value="+52" label="Mexico"></option>
+            <option value="+27" label="South Africa"></option><option value="+234" label="Nigeria"></option>
+          </datalist>
+          <div class="form-row single"><div class="field"><label>Address</label><textarea id="p-address" placeholder="Your business address"></textarea></div></div>
+          <div class="form-row">
+            <div class="field"><label>GST / Tax Number <span class="req">*</span></label><input id="p-tax" placeholder="22AAAAA0000A1Z5" oninput="clearErr(this)"><span class="err-msg">Please enter your GST / Tax number.</span></div>
+            <div class="field"><label>Website</label><input id="p-web" placeholder="www.yoursite.com"></div>
+          </div>
+          <div class="form-row">
+            <div class="field"><label>Default Currency <span class="req">*</span></label>
+              <select id="p-currency" onchange="clearErr(this)">
+                <option value="₹">₹ INR</option><option value="$">$ USD</option>
+                <option value="€">€ EUR</option><option value="£">£ GBP</option><option value="¥">¥ JPY</option>
+              </select>
+              <span class="err-msg">Please choose a default currency.</span>
+            </div>
+            <div class="field"><label>Default Tax Rate (%)</label><input id="p-taxrate" type="number" value="18" min="0" max="100"></div>
+          </div>
+          <div class="form-row">
+            <div class="field"><label>Default Tax Label</label><input id="p-taxlabel" value="GST" placeholder="GST / VAT"></div>
+            <div class="field"></div>
+          </div>
+          <div class="form-row single"><div class="field"><label>Default Payment Notes</label><textarea id="p-terms" placeholder="Payment due within 15 days..."></textarea></div></div>
+        </div>
+        <div class="form-actions">
+          <button class="btn btn-primary" onclick="saveProfile()">Save Profile</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- STATUS MODAL -->
+<div class="modal-overlay" id="status-modal">
+  <div class="modal">
+    <div class="modal-title">Update Status</div>
+    <div class="modal-sub">Change the status of invoice <span id="modal-inv-id" class="modal-inv-id"></span></div>
+    <div class="modal-buttons" id="modal-buttons"></div>
+    <div class="modal-actions"><button class="btn btn-ghost" onclick="closeModal()">Cancel</button></div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script src="script.js"></script>
+</body>
+</html>
