@@ -2,14 +2,20 @@
   "name": "invoiceflow",
   "version": "1.0.0",
   "private": true,
-  "description": "InvoiceFlow with accounts, cloud sync, and server-side backups.",
+  "description": "InvoiceFlow — invoicing SaaS with accounts, encrypted cloud sync and backups. Deploys to Vercel + Postgres.",
   "main": "server.js",
   "scripts": {
-    "start": "node server.js",
     "dev": "node server.js",
-    "check": "node --check server.js && node --check script.js"
+    "start": "node server.js",
+    "db:migrate": "node scripts/migrate.js",
+    "db:import-legacy": "node scripts/import-legacy.js",
+    "check": "node --check server.js && node --check api/index.js && for f in lib/*.js scripts/*.js; do node --check $f || exit 1; done && for f in public/js/*.js; do node --check $f || exit 1; done",
+    "audit": "npm audit --audit-level=moderate"
   },
   "engines": {
     "node": ">=20"
+  },
+  "dependencies": {
+    "pg": "^8.23.1"
   }
 }

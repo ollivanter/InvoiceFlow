@@ -1,0 +1,22 @@
+{
+  "productName": "InvoiceFlow",
+  "legalName": "[Your registered business name]",
+  "address": "[Registered street address, City, State, PIN/ZIP, Country]",
+  "registrationNumber": "[Company registration / CIN, if applicable]",
+  "taxId": "[GSTIN / VAT number, if applicable]",
+  "contactEmail": "[support@yourdomain.com]",
+  "privacyEmail": "[privacy@yourdomain.com]",
+  "grievanceOfficer": "[Name of grievance officer / data protection contact]",
+  "governingLaw": "[Country / State whose laws govern the Terms]",
+  "legal": {
+    "effectiveDate": "2026-10-17",
+    "termsVersion": "2026-10-17",
+    "minimumAge": 18
+  },
+  "subprocessors": [
+    { "name": "Vercel Inc.", "purpose": "Application hosting and serverless functions", "location": "United States / global edge" },
+    { "name": "Neon Inc.", "purpose": "Managed PostgreSQL database (encrypted at rest)", "location": "Region selected for the database" },
+    { "name": "Resend", "purpose": "Delivery of account verification and security emails", "location": "United States" },
+    { "name": "Cloudflare Turnstile", "purpose": "Bot protection on sign-up and sign-in (only when enabled)", "location": "Global" }
+  ]
+}
