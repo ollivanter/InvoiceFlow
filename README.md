@@ -13,7 +13,8 @@ Invoicing SaaS: branded invoices, clients, products, dashboard, encrypted cloud 
    | `APP_SECRET` | yes | `openssl rand -base64 32` — signs OTPs and unsubscribe links |
    | `DATA_ENCRYPTION_KEY` | yes | `openssl rand -base64 32` — encrypts business data at rest. **Back it up; losing it makes data unreadable.** |
    | `APP_URL` | yes | e.g. `https://invoiceflow.example.com` (used in email links) |
-   | `RESEND_API_KEY`, `MAIL_FROM` | yes for real users | Verification/reset emails via [Resend](https://resend.com) with a verified domain |
+   | `SMTP_HOST`, `SMTP_PORT`, `SMTP_USER`, `SMTP_PASS` | one email option | Free option: a Gmail account + App Password (`smtp.gmail.com`, port `465`) |
+   | `RESEND_API_KEY`, `MAIL_FROM` | one email option | Alternative: [Resend](https://resend.com) with a verified domain |
    | `TURNSTILE_SITE_KEY`, `TURNSTILE_SECRET_KEY` | optional | Cloudflare Turnstile bot protection |
 
 3. **Deploy** — import the repo in Vercel (framework preset: *Other*). `vercel.json` serves `public/`, routes `/api/*` to the function, and sets security headers. The schema is created automatically on first request (or run `npm run db:migrate` locally against the same `DATABASE_URL`).
@@ -29,7 +30,7 @@ npm install
 npm run dev                   # http://localhost:3000
 ```
 
-Without `RESEND_API_KEY`, verification codes are printed to the server console and shown in the browser (development only — never in production unless `OTP_DEMO=1`).
+Without an email provider (`SMTP_*` or `RESEND_API_KEY`), verification codes are printed to the server console and shown in the browser (development only — never in production unless `OTP_DEMO=1`).
 
 Import accounts from the old file-based version: `npm run db:import-legacy data/db.json` (users keep their passwords and are asked to accept the Terms on next sign-in).
 
