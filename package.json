@@ -16,7 +16,7 @@
     "node": ">=20"
   },
   "dependencies": {
-    "nodemailer": "10.1.2",
+    "nodemailer": "10.1.7",
     "pg": "^8.23.1"
   }
 }
